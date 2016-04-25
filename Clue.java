@@ -1,22 +1,44 @@
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Shape;
 
-public class Clue extends Item{
-	
+public class Clue extends Item {
+
+	/**
+	 * initialize data fields
+	 */
 	private String Hint;
-	
-	public Clue(Furniture furniture, String hint, String information, String reaction, Shape sprite, Color color){
+
+	/**
+	 * constructor to create a Clue that calls Item constructor and passes
+	 * additional data of Hint
+	 * 
+	 * @param furniture
+	 * @param hint
+	 * @param information
+	 * @param reaction
+	 * @param sprite
+	 * @param color
+	 */
+	public Clue(Furniture furniture, String hint, String information, String reaction, Shape sprite, Color color) {
 		super(furniture, information, reaction, sprite, color);
 		setHint(hint);
 	}
-	
-	//method for setting hint
-	private void setHint(String hint){
+
+	/**
+	 * method for setting Hint
+	 * 
+	 * @param hint
+	 */
+	private void setHint(String hint) {
 		this.Hint = hint;
 	}
-	
-	//method for getting hint
-	public String getHint(){
+
+	/**
+	 * method for getting Hint
+	 * 
+	 * @return
+	 */
+	public String getHint() {
 		return this.Hint;
 	}
 }
