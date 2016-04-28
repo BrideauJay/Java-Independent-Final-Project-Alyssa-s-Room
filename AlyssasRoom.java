@@ -1,4 +1,6 @@
 import javafx.application.Application;
+import javafx.scene.text.*;
+import javafx.scene.control.Label;
 import java.util.ArrayList;
 import javafx.geometry.Pos;
 import javafx.geometry.Point2D;
@@ -25,6 +27,7 @@ public class AlyssasRoom extends Application {
 		final double ROOM_WIDTH = 600;
 
 		final double ROOM_HEIGHT = 400;
+
 
 		/** create the window, or world, the project will live in */
 		StackPane world = new StackPane();
@@ -141,13 +144,26 @@ public class AlyssasRoom extends Application {
 
 		/** add player's pane to world */
 		room.getChildren().add(playerMove);
+		
+		/** create a pane to hold information and reactions to items */
+		StackPane messages = new StackPane();
+		messages.setMaxSize(ROOM_WIDTH, ROOM_HEIGHT);
 
 		/** add room to world */
 		world.getChildren().add(room);
+		
+		/** add message pane to world */
+		world.getChildren().add(messages);
 
+		
+		
+		
 		/**
 		 * KEY INPUT
 		 */
+		
+		/** initialize counting variable to give correct reactions to button presses */
+		int pressedCount = 0;
 
 		/** let key presses move player character and interact with items */
 		sarah.getSprite().setOnKeyPressed(e -> {
@@ -179,20 +195,26 @@ public class AlyssasRoom extends Application {
 													// normal
 				} else if (sarah.getX() < ROOM_WIDTH - 65) {// too close to
 															// wall,
-					sarah.setX(sarah.getX() + 5);
+					sarah.setX(sarah.getX() + 5); // move right a little
 				}
-				break; // move right a little
+				break; 
 			case SPACE: /** allow for interaction with items by spacebar */
-				if (sarah.getCorner().distance(hairbrush.getCorner().add(dresser.getCorner())) < 100) {
+				if (sarah.getCorner().distance(hairbrush.getCorner().add(dresser.getCorner())) < 100 && pressedCount == 0) {
 					hairbrush.setColor(Color.AQUA);
+					giveInfo(hairbrush, messages);
 				}
-				if (sarah.getCorner().distance(book.getCorner().add(shelves.getCorner())) < 100) {
+				if (sarah.getCorner().distance(book.getCorner().add(shelves.getCorner())) < 100 && pressedCount == 0) {
 					book.setColor(Color.AQUA);
+					giveInfo(book, messages);
 				}
-				if (sarah.getCorner().distance(pillow.getCorner().add(bed.getCorner())) < 100) {
+				if (sarah.getCorner().distance(pillow.getCorner().add(bed.getCorner())) < 100 && pressedCount == 0) {
 					pillow.setColor(Color.AQUA);
+					giveInfo(pillow, messages);
 				}
 				break;
+			case X: /** to clear the message pane */
+				messages.getChildren().clear();
+				
 			}
 		});
 
@@ -201,7 +223,7 @@ public class AlyssasRoom extends Application {
 		 */
 
 		/** create scene to hold the room, set title, and display */
-		Scene scene = new Scene(world, 600, 400);
+		Scene scene = new Scene(world, ROOM_WIDTH, ROOM_HEIGHT);
 		primaryStage.setTitle("Alyssa's Room");
 		primaryStage.setScene(scene);
 		primaryStage.show();
@@ -253,6 +275,31 @@ public class AlyssasRoom extends Application {
 		/** add furniture StackPane to window */
 		layout.getChildren().add(pane);
 
+	}
+	
+	/** method to print an Item's information
+	 * @param item
+	 * @param messages
+	 */
+	public void giveInfo(Item item, StackPane messages){
+		String text = item.getInfo();
+		Rectangle messageBackground = new Rectangle (20, 20, 460, 260);
+		messageBackground.setFill(Color.GRAY);
+		messages.getChildren().add(messageBackground);
+		Font infoFont = new Font("serif", 20);
+		Label info = new Label(text);
+		info.setFont(infoFont);
+		info.setTextFill(Color.WHITE);
+		messages.getChildren().add(info);
+		
+	}
+	
+	/** method to print the Player's reaction to an Item
+	 * @param item
+	 * @param display
+	 */
+	public void giveReaction(Item item, StackPane display){
+		
 	}
 
 	/** the main function */
