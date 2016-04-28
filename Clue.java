@@ -41,4 +41,12 @@ public class Clue extends Item {
 	public String getHint() {
 		return this.Hint;
 	}
+	
+	/** override of method in item.
+	 * tells that item is a clue
+	 */
+	@Override
+	public boolean isClue(){
+		return true;
+	}
 }
