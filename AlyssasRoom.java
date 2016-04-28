@@ -8,8 +8,6 @@ import javafx.scene.Scene;
 import javafx.stage.Stage;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.StackPane;
-import javafx.scene.layout.BorderPane;
-import javafx.scene.layout.GridPane;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.*;
 import javafx.scene.layout.AnchorPane;
@@ -99,7 +97,7 @@ public class AlyssasRoom extends Application {
 
 		/** make a hairbrush and add it to the dresser */
 		Clue hairbrush = new Clue(dresser,
-				"If Alyssa didn't use this hairbrush, who did? Maybe they left some of their hair in it. I should take this and take a closer look later.",
+				"If Alyssa didn't use this hairbrush, who did?\n Maybe they left some of their hair in it.\n I should take a closer look later.",
 				"A hairbrush. There's still some hair caught in it.",
 				"Weird. I didn't think Alyssa would have a hairbrush.", new Rectangle(0, 0, 30, 10), Color.MAGENTA);
 		dresser.addItem(hairbrush);
@@ -116,7 +114,7 @@ public class AlyssasRoom extends Application {
 		Furniture shelves = new Furniture(new Rectangle(470, 10, 100, 150), Color.CHOCOLATE);
 
 		/** make a book and add it to the shelves */
-		Item book = new Item(shelves, "A yearbook from last year.", "It's for Alyssa's fancy private school",
+		Item book = new Item(shelves, "A yearbook from last year.", "It's for Alyssa's fancy private school.",
 				new Rectangle(0, 0, 4, 40), Color.DIMGRAY);
 		shelves.addItem(book);
 
@@ -147,7 +145,7 @@ public class AlyssasRoom extends Application {
 		
 		/** create a pane to hold information and reactions to items */
 		StackPane messages = new StackPane();
-		messages.setMaxSize(ROOM_WIDTH, ROOM_HEIGHT);
+		messages.setMaxSize(460, 260);
 
 		/** add room to world */
 		world.getChildren().add(room);
@@ -162,33 +160,32 @@ public class AlyssasRoom extends Application {
 		 * KEY INPUT
 		 */
 		
-		/** initialize counting variable to give correct reactions to button presses */
-		int pressedCount = 0;
 
 		/** let key presses move player character and interact with items */
 		sarah.getSprite().setOnKeyPressed(e -> {
 			switch (e.getCode()) {
+			
 			case UP:
 				if (sarah.getY() > 0) { // if up arrow pressed and player within
 										// room,
-					sarah.setY(sarah.getY() - 10);
+					sarah.setY(sarah.getY() - 10); // player moves up
 				}
-				break; // player moves up
+				break; 
 			case DOWN:
 				if (sarah.getY() < ROOM_HEIGHT - 130) { // down arrow and player
 														// in room
-					sarah.setY(sarah.getY() + 10);
+					sarah.setY(sarah.getY() + 10); // player moves down
 				}
-				break; // player moves down
+				break; 
 			case LEFT:
 				if (sarah.getX() == 5) { // if left arrow pressed and player
 											// within room
 					sarah.setX(sarah.getX() - 5);// too close to wall, move left
 													// a little
 				} else if (sarah.getX() > 0) { // far enough from wall,
-					sarah.setX(sarah.getX() - 10);
+					sarah.setX(sarah.getX() - 10); // move left normal amount
 				}
-				break; // move left normal amount
+				break; 
 			case RIGHT:
 				if (sarah.getX() < ROOM_WIDTH - 70) {// right arrow pressed
 					sarah.setX(sarah.getX() + 10); // far from wall, move right
@@ -199,21 +196,22 @@ public class AlyssasRoom extends Application {
 				}
 				break; 
 			case SPACE: /** allow for interaction with items by spacebar */
-				if (sarah.getCorner().distance(hairbrush.getCorner().add(dresser.getCorner())) < 100 && pressedCount == 0) {
-					hairbrush.setColor(Color.AQUA);
+					if (sarah.getCorner().distance(hairbrush.getCorner().add(dresser.getCorner())) < 100) {
+					//hairbrush.setColor(Color.AQUA);
 					giveInfo(hairbrush, messages);
-				}
-				if (sarah.getCorner().distance(book.getCorner().add(shelves.getCorner())) < 100 && pressedCount == 0) {
-					book.setColor(Color.AQUA);
+				} 
+			
+				if (sarah.getCorner().distance(book.getCorner().add(shelves.getCorner())) < 100) {
+					//book.setColor(Color.AQUA);
 					giveInfo(book, messages);
 				}
-				if (sarah.getCorner().distance(pillow.getCorner().add(bed.getCorner())) < 100 && pressedCount == 0) {
-					pillow.setColor(Color.AQUA);
+				if (sarah.getCorner().distance(pillow.getCorner().add(bed.getCorner())) < 100) {
+					//pillow.setColor(Color.AQUA);
 					giveInfo(pillow, messages);
-				}
+				};
 				break;
 			case X: /** to clear the message pane */
-				messages.getChildren().clear();
+					messages.getChildren().clear();
 				
 			}
 		});
@@ -281,26 +279,38 @@ public class AlyssasRoom extends Application {
 	 * @param item
 	 * @param messages
 	 */
-	public void giveInfo(Item item, StackPane messages){
-		String text = item.getInfo();
+	public boolean giveInfo(Item item, StackPane messages){
+		/**make a background for the new information */
 		Rectangle messageBackground = new Rectangle (20, 20, 460, 260);
 		messageBackground.setFill(Color.GRAY);
 		messages.getChildren().add(messageBackground);
+		/** make a label for the item information */
 		Font infoFont = new Font("serif", 20);
+		String text = "\n" + item.getInfo();
 		Label info = new Label(text);
+		StackPane.setAlignment(info, Pos.TOP_CENTER);
 		info.setFont(infoFont);
 		info.setTextFill(Color.WHITE);
-		messages.getChildren().add(info);
+		String react = item.getReact();
+		Label reaction = new Label(react);
+		StackPane.setAlignment(reaction, Pos.CENTER);
+		reaction.setFont(infoFont);
+		reaction.setTextFill(Color.ALICEBLUE);
+		messages.getChildren().addAll(info, reaction);
+		/** add a clue if there is one */
+		if (item.isClue()){
+			Clue clueItem = (Clue)item;
+			String clue = clueItem.getHint();
+			Label clueGive = new Label(clue);
+			StackPane.setAlignment(clueGive, Pos.BOTTOM_CENTER);
+			clueGive.setFont(infoFont);
+			clueGive.setTextFill(Color.BLUEVIOLET);
+			messages.getChildren().add(clueGive);
+		}
 		
+		return true;
 	}
 	
-	/** method to print the Player's reaction to an Item
-	 * @param item
-	 * @param display
-	 */
-	public void giveReaction(Item item, StackPane display){
-		
-	}
 
 	/** the main function */
 	public static void main(String[] args) {
