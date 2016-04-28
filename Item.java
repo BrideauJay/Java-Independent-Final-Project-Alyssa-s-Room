@@ -176,4 +176,12 @@ public class Item {
 	public Color getColor() {
 		return this.color;
 	}
+	
+	/** method to tell if the item is a clue or not.
+	 * overridden to be true in clue
+	 * @return
+	 */
+	public boolean isClue(){
+		return false;
+	}
 }
