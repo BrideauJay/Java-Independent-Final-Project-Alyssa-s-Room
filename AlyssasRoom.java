@@ -233,7 +233,7 @@ public class AlyssasRoom extends Application {
 				/** check player sprite's right side doesn't overlap */
 				&& (!((sarah.getX() > (dresser.getX() - 75))
 						/** but only if they would run into the dresser */
-						&& (sarah.getY() > (dresser.getY() - 135))
+						&& (sarah.getY() > (dresser.getY() - 130))
 						/** ensure player can move in front of the dresser */
 						&&(!(sarah.getY() > (dresser.getY() - 60)))
 						))
@@ -252,7 +252,7 @@ public class AlyssasRoom extends Application {
 						/** check if right hand side of player would overlap dresser */
 						&& (!((sarah.getX() > (dresser.getX() - 70))
 								/** check if player feet would overlap dresser */
-								&& (sarah.getY() > (dresser.getY() - 135))
+								&& (sarah.getY() > (dresser.getY() - 130))
 								/** ensure player can move in front of dresser */
 								&&(!(sarah.getY() > (dresser.getY() - 60)))
 								))
