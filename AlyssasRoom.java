@@ -26,7 +26,6 @@ public class AlyssasRoom extends Application {
 
 		final double ROOM_HEIGHT = 400;
 
-
 		/** create the window, or world, the project will live in */
 		StackPane world = new StackPane();
 
@@ -35,30 +34,35 @@ public class AlyssasRoom extends Application {
 		 * This will draw focus to the room, where all functioning code and
 		 * playable game is
 		 */
+		/** create rectangle to hold background color */
 		Pane background = new Pane();
 		Rectangle color = new Rectangle();
-		color.widthProperty().bind(world.widthProperty());// bind background to
-															// window size
+		/** bind rectangle of background color to window size */
+		color.widthProperty().bind(world.widthProperty());
 		color.heightProperty().bind(world.heightProperty());
-		Color darkPurple = new Color(.146, .16, .206, 1); // create custom
-															// background color
+		/** create a custom background color for background and set it */
+		Color darkPurple = new Color(.146, .16, .206, 1);
 		color.setFill(darkPurple);
-		background.getChildren().add(color);// add color to pane
-		world.getChildren().add(background);// add pane to world
+		/** add background color to pane */
+		background.getChildren().add(color);
+		/** add background pane to world */
+		world.getChildren().add(background);
 
 		/**
 		 * Create the room the user will interact with. It will be a different
 		 * color to set it apart from the background, and will stay centered in
 		 * the window. It will hold the furniture, items, and player
 		 */
+		/** create pane and rectangle for room */
 		StackPane room = new StackPane();
 		Rectangle roomColor = new Rectangle();
-		roomColor.setWidth(ROOM_WIDTH);// set unchanging width and height using
-										// data set up
-		roomColor.setHeight(ROOM_HEIGHT); // earlier
-		roomColor.setFill(Color.LIGHTSKYBLUE); // set color of room
-		room.getChildren().add(roomColor);// add rectangle of color to create
-											// visual room
+		/** set an unchanging width and height for the playable room using data input earlier */
+		roomColor.setWidth(ROOM_WIDTH);
+		roomColor.setHeight(ROOM_HEIGHT); 
+		/** set the color of the room to distinguish it from the background */
+		roomColor.setFill(Color.LIGHTSKYBLUE); 
+		/** add the rectangle of color to the pane to create the visual room */
+		room.getChildren().add(roomColor);
 
 		/**
 		 * make AnchorPane to precisely position furniture and items and make
@@ -67,6 +71,8 @@ public class AlyssasRoom extends Application {
 		AnchorPane furnitureLayout = new AnchorPane();
 		furnitureLayout.setMaxSize(ROOM_WIDTH, ROOM_HEIGHT);
 
+		
+		
 		/**
 		 * MAKE FURNITURE
 		 */
@@ -97,7 +103,7 @@ public class AlyssasRoom extends Application {
 
 		/** make a hairbrush and add it to the dresser */
 		Clue hairbrush = new Clue(dresser,
-				"If Alyssa didn't use this hairbrush, who did?\n Maybe they left some of their hair in it.\n I should take a closer look later.",
+				"If Alyssa didn't use this hairbrush, who did?\nMaybe they left some of their hair in it.\nI should take a closer look later.",
 				"A hairbrush. There's still some hair caught in it.",
 				"Weird. I didn't think Alyssa would have a hairbrush.", new Rectangle(0, 0, 30, 10), Color.MAGENTA);
 		dresser.addItem(hairbrush);
@@ -130,89 +136,147 @@ public class AlyssasRoom extends Application {
 
 		/** create pane for player to move around in */
 		AnchorPane playerMove = new AnchorPane();
-		playerMove.setMaxSize(ROOM_WIDTH, ROOM_HEIGHT); // set player's
-														// AnchorPane to
-														// room size
+		/** set the size of the pane the Player can move in to the size of the room */
+		playerMove.setMaxSize(ROOM_WIDTH, ROOM_HEIGHT); 
 
 		/** create Player */
-		Player sarah = new Player("Sarah", new Point2D(250, 250), Color.CORNSILK);
+		Player sarah = new Player("Sarah", new Point2D(100, 250), Color.CORNSILK);
 
 		/** add player to AnchorPane */
 		playerMove.getChildren().add(sarah.getSprite());
 
 		/** add player's pane to world */
 		room.getChildren().add(playerMove);
-		
+
 		/** create a pane to hold information and reactions to items */
 		StackPane messages = new StackPane();
 		messages.setMaxSize(460, 260);
 
+		/** display controls when window is first launched */
+		// giveControls(messages);
+
 		/** add room to world */
 		world.getChildren().add(room);
-		
+
 		/** add message pane to world */
 		world.getChildren().add(messages);
 
-		
-		
-		
 		/**
 		 * KEY INPUT
 		 */
-		
 
 		/** let key presses move player character and interact with items */
 		sarah.getSprite().setOnKeyPressed(e -> {
 			switch (e.getCode()) {
-			
+
 			case UP:
-				if (sarah.getY() > 0) { // if up arrow pressed and player within
-										// room,
-					sarah.setY(sarah.getY() - 10); // player moves up
+				/** check player is within the confines of the room */
+				if (sarah.getY() > 0 && 
+						/**CHECK FOR SHELVES OVERLAP */
+						/** check that the right side of the player's sprite
+						 * is not overlapping the shelves */
+						(!((sarah.getX() > (shelves.getX() - 70)) &&
+								/** check that Player's 'feet' (bottom of sprite)
+								 * don't overlap shelves*/
+				(sarah.getY() < (shelves.getY() + 35)))) 
+						/** CHECK FOR DRESSER OVERLAP */
+						/** check that right side of player sprite doesn't overlap dresser */
+						&& (!((sarah.getX() > (dresser.getX() - 65)) 
+						/** check that player's 'feet' don't climb dresser */
+								&& (sarah.getY() > (dresser.getY() - 70)) 
+						/** ensure player can still move in front of the dresser */
+						&& (sarah.getY() < (dresser.getY() - 40)) 
+						))
+
+				) { 
+					/** if all conditions met, player moves up */
+					sarah.setY(sarah.getY() - 10); 
 				}
-				break; 
+				break;
 			case DOWN:
-				if (sarah.getY() < ROOM_HEIGHT - 130) { // down arrow and player
-														// in room
-					sarah.setY(sarah.getY() + 10); // player moves down
+				/** check player is within confines of room */
+				if (sarah.getY() < ROOM_HEIGHT - 130 
+						/** CHECK FOR DRESSER OVERLAP */
+						/** check that right side of player sprite doesn't overlap dresser */
+						&& (!((sarah.getX() > (dresser.getX() - 65)) 
+						/** check that player doesn't walk over dresser */
+								&& (sarah.getY() > (dresser.getY() - 135))
+						/** ensure player can move in front of dresser */
+								&&(!(sarah.getY() > (dresser.getY() - 60)))
+						))
+						) {
+					/** if conditions met, player moves down */
+					sarah.setY(sarah.getY() + 10); 
 				}
-				break; 
+				break;
 			case LEFT:
-				if (sarah.getX() == 5) { // if left arrow pressed and player
-											// within room
-					sarah.setX(sarah.getX() - 5);// too close to wall, move left
-													// a little
-				} else if (sarah.getX() > 0) { // far enough from wall,
-					sarah.setX(sarah.getX() - 10); // move left normal amount
+				/** if player is close to left wall, ensure they don't move out of room */
+				if (sarah.getX() == 5) { 
+					/** move left by only 5 so sprite doesn't leave room */
+					sarah.setX(sarah.getX() - 5);
+					/** if player far from wall, let them move normally */
+				} else if (sarah.getX() > 0) { 
+					/** move left normally */
+					sarah.setX(sarah.getX() - 10); 
 				}
-				break; 
+				break;
 			case RIGHT:
-				if (sarah.getX() < ROOM_WIDTH - 70) {// right arrow pressed
-					sarah.setX(sarah.getX() + 10); // far from wall, move right
-													// normal
-				} else if (sarah.getX() < ROOM_WIDTH - 65) {// too close to
-															// wall,
-					sarah.setX(sarah.getX() + 5); // move right a little
+				/** if player well within room, 
+				 * move normally */
+				if (sarah.getX() < ROOM_WIDTH - 70 && 
+						/** CHECK FOR SHELVES OVERLAP */
+						/** check right side of sprite not overlapping */
+				(!((sarah.getX() > (shelves.getX() - 75)) && 
+						/** movement only restricted if shelf is in the way (by height/Y) */
+				(sarah.getY() < (shelves.getY() + 30))))
+				/** CHECK FOR DRESSER OVERLAP */
+				/** check player sprite's right side doesn't overlap */
+				&& (!((sarah.getX() > (dresser.getX() - 75))
+						/** but only if they would run into the dresser */
+						&& (sarah.getY() > (dresser.getY() - 135))
+						/** ensure player can move in front of the dresser */
+						&&(!(sarah.getY() > (dresser.getY() - 60)))
+						))
+				) {
+					/** if conditions met, move player right */
+					sarah.setX(sarah.getX() + 10); 
+					/** if player too close to wall, 
+					 * prevent them leaving room */
+				} else if (sarah.getX() < ROOM_WIDTH - 65 && 
+						/** CHECK FOR SHELVES OVERLAP */
+						/** check if player sprite's right side overlaps shelves */
+						(!((sarah.getX() > (shelves.getX() - 70)) 
+								/** check if player 'feet' would overlap dresser by moving right */
+								&& (sarah.getY() < (shelves.getY() + 30))))
+						/** CHECK FOR DRESSER OVERLAP */
+						/** check if right hand side of player would overlap dresser */
+						&& (!((sarah.getX() > (dresser.getX() - 70))
+								/** check if player feet would overlap dresser */
+								&& (sarah.getY() > (dresser.getY() - 135))
+								/** ensure player can move in front of dresser */
+								&&(!(sarah.getY() > (dresser.getY() - 60)))
+								))
+						) {
+					/** if conditions met, move right by 5 */
+					sarah.setX(sarah.getX() + 5); 
 				}
-				break; 
+				break;
 			case SPACE: /** allow for interaction with items by spacebar */
-					if (sarah.getCorner().distance(hairbrush.getCorner().add(dresser.getCorner())) < 100) {
-					//hairbrush.setColor(Color.AQUA);
+				if (sarah.getCorner().distance(hairbrush.getCorner().add(dresser.getCorner())) < 100) {
 					giveInfo(hairbrush, messages);
-				} 
-			
+				}
+
 				if (sarah.getCorner().distance(book.getCorner().add(shelves.getCorner())) < 100) {
-					//book.setColor(Color.AQUA);
 					giveInfo(book, messages);
 				}
 				if (sarah.getCorner().distance(pillow.getCorner().add(bed.getCorner())) < 100) {
-					//pillow.setColor(Color.AQUA);
 					giveInfo(pillow, messages);
-				};
+				}
+				;
 				break;
 			case X: /** to clear the message pane */
-					messages.getChildren().clear();
-				
+				messages.getChildren().clear();
+
 			}
 		});
 
@@ -225,8 +289,12 @@ public class AlyssasRoom extends Application {
 		primaryStage.setTitle("Alyssa's Room");
 		primaryStage.setScene(scene);
 		primaryStage.show();
-
 		sarah.getSprite().requestFocus();
+		
+		/** display instructions for controls on startup */
+		giveControls(messages);
+
+		
 	}
 
 	/**
@@ -274,14 +342,16 @@ public class AlyssasRoom extends Application {
 		layout.getChildren().add(pane);
 
 	}
-	
-	/** method to print an Item's information
+
+	/**
+	 * method to print an Item's information
+	 * 
 	 * @param item
 	 * @param messages
 	 */
-	public boolean giveInfo(Item item, StackPane messages){
-		/**make a background for the new information */
-		Rectangle messageBackground = new Rectangle (20, 20, 460, 260);
+	public boolean giveInfo(Item item, StackPane messages) {
+		/** make a background for the new information */
+		Rectangle messageBackground = new Rectangle(20, 20, 460, 260);
 		messageBackground.setFill(Color.GRAY);
 		messages.getChildren().add(messageBackground);
 		/** make a label for the item information */
@@ -298,19 +368,41 @@ public class AlyssasRoom extends Application {
 		reaction.setTextFill(Color.ALICEBLUE);
 		messages.getChildren().addAll(info, reaction);
 		/** add a clue if there is one */
-		if (item.isClue()){
-			Clue clueItem = (Clue)item;
+		if (item.isClue()) {
+			Clue clueItem = (Clue) item;
 			String clue = clueItem.getHint();
 			Label clueGive = new Label(clue);
 			StackPane.setAlignment(clueGive, Pos.BOTTOM_CENTER);
 			clueGive.setFont(infoFont);
-			clueGive.setTextFill(Color.BLUEVIOLET);
+			clueGive.setTextFill(Color.AQUAMARINE);
 			messages.getChildren().add(clueGive);
 		}
-		
+
 		return true;
 	}
-	
+
+	/** method to display controls for the game on starting
+	 * given a pane to display them in
+	 * @param pane
+	 */
+	public void giveControls(Pane pane) {
+		/** create background for message */
+		Rectangle blackout = new Rectangle(0, 0, 600, 400);
+		/** color the background */
+		blackout.setFill(Color.AQUAMARINE);
+		/** add the message background to the specified pane */
+		pane.getChildren().add(blackout);
+		/** this string holds the instructions for the controls for the game */
+		String commands = "Controls: \nMove with arrow keys\nPress spacebar to investigate\nPress X to dismiss alert\n \nPress X to start";
+		/** make the control string into a label we can put in the pane */
+		Label controls = new Label(commands);
+		/** set the font for the controls */
+		Font controlFont = new Font("serif", 40);
+		controls.setFont(controlFont);
+		controls.setTextFill(Color.BLACK);
+		/** display control instructions in the specified pane */
+		pane.getChildren().add(controls);
+	}
 
 	/** the main function */
 	public static void main(String[] args) {
